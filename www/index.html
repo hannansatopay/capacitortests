@@ -1,0 +1,120 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
+    <meta name="viewport" content="width=device-width">
+    <title>Web Speech Recognition</title>
+  </head>
+<style>
+  #snackbar {
+    visibility: hidden;
+    min-width: 250px;
+    margin-left: -125px;
+    background-color: #333;
+    color: #fff;
+    text-align: center;
+    border-radius: 2px;
+    padding: 16px;
+    position: fixed;
+    z-index: 1;
+    left: 50%;
+    bottom: 30px;
+    font-size: 17px;
+  }
+
+  #snackbar.show {
+    visibility: visible;
+    -webkit-animation: fadein 0.5s, fadeout 0.5s 2.5s;
+    animation: fadein 0.5s, fadeout 0.5s 2.5s;
+  }
+
+  @-webkit-keyframes fadein {
+    from {
+      bottom: 0;
+      opacity: 0;
+    }
+
+    to {
+      bottom: 30px;
+      opacity: 1;
+    }
+  }
+
+  @keyframes fadein {
+    from {
+      bottom: 0;
+      opacity: 0;
+    }
+
+    to {
+      bottom: 30px;
+      opacity: 1;
+    }
+  }
+
+  @-webkit-keyframes fadeout {
+    from {
+      bottom: 30px;
+      opacity: 1;
+    }
+
+    to {
+      bottom: 0;
+      opacity: 0;
+    }
+  }
+
+  @keyframes fadeout {
+    from {
+      bottom: 30px;
+      opacity: 1;
+    }
+
+    to {
+      bottom: 0;
+      opacity: 0;
+    }
+  }
+</style>
+  <body>
+    <button type="button" id="btn" onclick="myFunction()">Click Me!</button>
+	<div id="snackbar"></div>
+	<script src="capacitor.js"></script>
+	<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
+    <script>
+	var SpeechRecognition = SpeechRecognition || webkitSpeechRecognition
+	
+	var recognition = new SpeechRecognition();
+	recognition.continuous = false;
+	recognition.lang = 'zh-CN';
+	recognition.interimResults = false;
+	recognition.maxAlternatives = 1;
+
+function myFunction() {
+  recognition.start();
+  $("#btn").text("Listening...");
+}
+
+recognition.onresult = function(event) {
+$("#btn").text("Click Me!");
+  $("#snackbar").text(event.results[0][0].transcript);
+      var x = document.getElementById("snackbar");
+      x.className = "show";
+      setTimeout(function() {
+        x.className = x.className.replace("show", "");
+      }, 5000);
+  console.log(event.results[0][0].transcript);
+  console.log(event.results[0][0].confidence);
+}
+
+recognition.onspeechend = function() {
+  recognition.stop();
+}
+
+recognition.onnomatch = function(event) {
+  alert("I didn't recognise that!");
+}
+	</script>
+  </body>
+</html>
